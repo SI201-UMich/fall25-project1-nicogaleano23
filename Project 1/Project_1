@@ -1,0 +1,19 @@
+import csv
+
+def analyze_csv(filename):
+    with open(filename) as f:
+        reader = csv.reader(f)
+
+        header = next(reader)
+        
+        sample_row = next(reader)
+
+        row_count = 1 + sum(1 for _ in reader)
+
+    print("Column names:")
+    print(header)
+    print("Sample Row:")
+    print(sample_row)
+    print("Number of rows:", row_count)
+
+analyze_csv("SampleSuperstore.csv")
