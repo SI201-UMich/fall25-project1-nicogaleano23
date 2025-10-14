@@ -2,9 +2,11 @@
 # 42505284
 # ngaleano@umich.edu
 # used chat gpt to help me with the generate report function, I was having trouble formatting it since we have not done to much of it in class so gen ai helped me construct and clean up the function such as using .2f for the decimal places.
+# gen ai also helped me with some test cases as I was struggling with coming up with 4 different ways to test each function. also helped again with comparing using decimal places. 
 
 
 import csv
+import unittest
 
 def analyze_csv(filename):
     with open(filename) as f:
@@ -94,3 +96,78 @@ region_max_furniture = region_maxavg_furniture_price(d2)
 generate_report("report.csv", avg_price_fc_nyc, region_max_furniture)
 print(avg_price_fc_nyc, region_max_furniture)
 
+# test functions
+class TestSuperstoreCalcs(unittest.TestCase):
+
+    def test_rows_firstclass_nyc(self):
+        rows = [
+            {'City':'New York City','Ship Mode':'First Class','Sales':'100'},
+            {'City':'New York City','Ship Mode':'First Class','Sales':'50'},
+        ]
+        self.assertEqual(rows_firstclass_nyc(rows), [100.0, 50.0])
+
+        rows = [
+            {'City':'New York City','Ship Mode':'First Class','Sales':'75'},
+            {'City':'New York City','Ship Mode':'Second Class','Sales':'200'},
+            {'City':'Los Angeles','Ship Mode':'First Class','Sales':'300'},
+        ]
+        self.assertEqual(rows_firstclass_nyc(rows), [75.0])
+
+        rows = [
+            {'City':'Boston','Ship Mode':'First Class','Sales':'10'},
+            {'City':'New York City','Ship Mode':'Second Class','Sales':'20'},
+        ]
+        self.assertEqual(rows_firstclass_nyc(rows), [])
+
+        rows = [{'City':'New York City','Ship Mode':'First Class','Sales':'abc'}]
+        with self.assertRaises(ValueError):
+            rows_firstclass_nyc(rows)
+
+    def test_avg_price_firstclass_nyc(self):
+        self.assertAlmostEqual(avg_price_firstclass_nyc([100.0, 200.0]), 150.0, places=2)
+
+        self.assertAlmostEqual(avg_price_firstclass_nyc([0.0, 50.0, 100.0]), 50.0, places=2)
+
+        self.assertAlmostEqual(avg_price_firstclass_nyc([42.5]), 42.5, places=2)
+
+        with self.assertRaises(ZeroDivisionError):
+            avg_price_firstclass_nyc([])
+
+    def test_rows_furniture(self):
+        rows = [
+            {'Category':'Furniture','Region':'East','Sales':'100'},
+            {'Category':'Furniture','Region':'West','Sales':'200'},
+            {'Category':'Furniture','Region':'East','Sales':'50'},
+        ]
+        self.assertEqual(rows_furniture(rows), {'East':[100.0, 50.0], 'West':[200.0]})
+
+        rows = [
+            {'Category':'Furniture','Region':'South','Sales':'10'},
+            {'Category':'Office Supplies','Region':'South','Sales':'999'},
+            {'Category':'Technology','Region':'South','Sales':'888'},
+        ]
+        self.assertEqual(rows_furniture(rows), {'South':[10.0]})
+
+        rows = [
+            {'Category':'Technology','Region':'East','Sales':'100'},
+            {'Category':'Office Supplies','Region':'West','Sales':'200'},
+        ]
+        self.assertEqual(rows_furniture(rows), {})
+
+        rows = [{'Category':'Furniture','Region':'East','Sales':'oops'}]
+        with self.assertRaises(ValueError):
+            rows_furniture(rows)
+
+    def test_region_maxavg_furniture_price(self):
+        d = {'East':[100.0, 200.0], 'West':[300.0]}
+        self.assertEqual(region_maxavg_furniture_price(d), ('West', 300.0))
+
+        d = {'East':[100.0, 200.0, 300.0], 'West':[200.0, 220.0]}
+        region, avg = region_maxavg_furniture_price(d)
+        self.assertEqual(region, 'West')
+        self.assertAlmostEqual(avg, 210.0, places=2)
+
+        d = {'East':[200.0, 200.0], 'West':[200.0]}
+        self.assertEqual(region_maxavg_furniture_price(d), ('East', 200.0))
+
+        self.assertEqual(region_maxavg_furniture_price({}), ("", 0))
