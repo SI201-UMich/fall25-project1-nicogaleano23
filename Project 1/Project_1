@@ -1,3 +1,8 @@
+# Nicolas Galeano
+# 42505284
+# ngaleano@umich.edu
+
+
 import csv
 
 def analyze_csv(filename):
@@ -17,3 +22,60 @@ def analyze_csv(filename):
     print("Number of rows:", row_count)
 
 analyze_csv("SampleSuperstore.csv")
+
+# avg price of first class shipments heading into NYC
+# which region has the highest avg price of furniture shipments
+
+def load_orders(csv_path):
+    with open(csv_path) as f:
+        return list(csv.DictReader(f))
+
+rows = load_orders("SampleSuperstore.csv")
+
+def rows_firstclass_nyc(rows):
+    d = {}
+    for row in rows:
+        if row['City'] == 'New York City' and row['Ship Mode'] == 'First Class':
+            d[row['Order ID']] = float(row['Sales'])
+    return d
+
+def avg_price_firstclass_nyc(d):
+    total = 0
+    count = 0
+    for order in d:
+        total += d[order]
+        count += 1
+    avg_fc_nyc = total / count
+    return avg_fc_nyc
+
+def rows_furniture(rows):
+    d = {}
+    for row in rows:
+        if row['Category'] == 'Furniture':
+            region = row['Region']
+            if region not in d:
+                d[region] = []
+            d[region].append(float(row['Sales']))
+    return d
+
+def region_maxavg_furniture_price(d):
+    tup = ("", 0)
+    dict = {}
+    max_price = 0
+    max_region = ""
+    for region in d:
+        total = 0
+        count = 0
+        for price in d[region]:
+            total += price
+            count += 1
+        avg_price = total / count
+        dict[region] = avg_price
+        if avg_price > max_price:
+            max_price = avg_price
+            max_region = region
+    tup = (max_region, max_price)
+    return tup
+
+def generate_report(file_name, avg_price_fc_nyc, region_max_furniture):
+    
