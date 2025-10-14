@@ -1,6 +1,7 @@
 # Nicolas Galeano
 # 42505284
 # ngaleano@umich.edu
+# used chat gpt to help me with the generate report function, I was having trouble formatting it since we have not done to much of it in class so gen ai helped me construct and clean up the function such as using .2f for the decimal places.
 
 
 import csv
@@ -33,17 +34,17 @@ def load_orders(csv_path):
 rows = load_orders("SampleSuperstore.csv")
 
 def rows_firstclass_nyc(rows):
-    d = {}
+    list = []
     for row in rows:
         if row['City'] == 'New York City' and row['Ship Mode'] == 'First Class':
-            d[row['Order ID']] = float(row['Sales'])
-    return d
+            list.append(float(row['Sales']))
+    return list
 
-def avg_price_firstclass_nyc(d):
+def avg_price_firstclass_nyc(list):
     total = 0
     count = 0
-    for order in d:
-        total += d[order]
+    for price in list:
+        total += price
         count += 1
     avg_fc_nyc = total / count
     return avg_fc_nyc
@@ -81,8 +82,8 @@ def generate_report(file_name, avg_price_fc_nyc, region_max_furniture):
     region, avg_furn = region_max_furniture
     outFile = open(file_name, "w")
     csvOut = csv.writer(outFile)
-    csvOut.write([f"Average Price of First Class Shipments to NYC: {avg_price_fc_nyc}"])
-    csvOut.write([f"Region with Highest Average Price of Furniture Shipments: {region} (${avg_furn:.2f})"])
+    csvOut.writerow([f"Average Price of First Class Shipments to NYC: {avg_price_fc_nyc:.2f}"])
+    csvOut.writerow([f"Region with Highest Average Price of Furniture Shipments: {region} (${avg_furn:.2f})"])
     outFile.close()
 
 load_orders("SampleSuperstore.csv")
@@ -91,3 +92,5 @@ avg_price_fc_nyc = avg_price_firstclass_nyc(d1)
 d2 = rows_furniture(rows)
 region_max_furniture = region_maxavg_furniture_price(d2)
 generate_report("report.csv", avg_price_fc_nyc, region_max_furniture)
+print(avg_price_fc_nyc, region_max_furniture)
+
