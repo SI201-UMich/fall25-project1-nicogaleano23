@@ -171,3 +171,6 @@ class TestSuperstoreCalcs(unittest.TestCase):
         self.assertEqual(region_maxavg_furniture_price(d), ('East', 200.0))
 
         self.assertEqual(region_maxavg_furniture_price({}), ("", 0))
+
+if __name__ == "__main__":
+    unittest.main()
