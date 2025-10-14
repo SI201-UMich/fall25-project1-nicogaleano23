@@ -78,4 +78,16 @@ def region_maxavg_furniture_price(d):
     return tup
 
 def generate_report(file_name, avg_price_fc_nyc, region_max_furniture):
-    
+    region, avg_furn = region_max_furniture
+    outFile = open(file_name, "w")
+    csvOut = csv.writer(outFile)
+    csvOut.write([f"Average Price of First Class Shipments to NYC: {avg_price_fc_nyc}"])
+    csvOut.write([f"Region with Highest Average Price of Furniture Shipments: {region} (${avg_furn:.2f})"])
+    outFile.close()
+
+load_orders("SampleSuperstore.csv")
+d1 = rows_firstclass_nyc(rows)
+avg_price_fc_nyc = avg_price_firstclass_nyc(d1)
+d2 = rows_furniture(rows)
+region_max_furniture = region_maxavg_furniture_price(d2)
+generate_report("report.csv", avg_price_fc_nyc, region_max_furniture)
